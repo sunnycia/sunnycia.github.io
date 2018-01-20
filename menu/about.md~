@@ -1,0 +1,5 @@
+---
+layout: page
+title: About
+---
+Sunnycia's Blog. Build on jekyll, Lagrange theme. About Lagrange theme, check it on [this site]({{ site.github.url }}{% post_url 2016-01-01-welcome-to-lagrange %}).
