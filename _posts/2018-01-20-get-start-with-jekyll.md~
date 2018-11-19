@@ -31,5 +31,11 @@ gem是与ruby绑定在一起的一个包管理工具, 作用类似于python的py
 
 pitfall: 使用gem安装jekyll过程也很简单, 只需一个命令即可```gem install jekyll```     但是我键入这个命令后半天都没有反应, 查找资料了解到可以在命令后面附加```-V```选项观测安装情况. 由于默认的软件源 rubygems.org 比较慢, 所以会给人半天没有反应的感觉.解决办法也很简单, 就是换一个gem源.```gem source -l```查看当前的软件源, ```gem sources --remove https://rubygems.org/``` 移除旧的官方软件源, ```gem source -a https://ruby.taobao.org/```附加淘宝的gem软件源. 最后再用	```gem source -l```查看当前软件源, 确定只剩下了一个taobao软件源.
 
-成功安装好jekyll之后就可以把模板里的文件全都copy到yourusername.github.io的目录下面, 然后在目录中键入``````
+成功安装好jekyll之后就可以把下载好的模板里的文件全都copy到yourusername.github.io的目录下面, 然后在目录中键入```jekyll server```开启服务, 若有错误, 会有提示. 常见的问题有配置的错误或者缺少了依赖项.如果是缺少了依赖项可以使用```gem install```的方式安装它提示的缺失项.
+
+tips:
+jekyll-gist, pygments...
+
+
+如果开启服务后没有问题, 则会提示server running. 这是你可以在浏览器中键入它显示的服务地址(默认为http://127.0.0.1:4000)来浏览生成的页面. 一般我们发一篇新的po文都是向模板里的_post目录下增加一个以日期命名的markdown文件, jekyll会根据md文件中头标记来判断该文章是否为一篇po文.具体可研究模板中的示例文件内部的写法. 一切无误后就可以将本地的仓库同步到远端, 向世界发布你的所思所想了~  
 

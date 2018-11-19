@@ -4,7 +4,7 @@ title: "Get start with github jekyll blog"
 author: "sunnycia"
 categories: journal
 tags: [documentation,sample]
-image: caffe.png
+image: jekyll.png
 ---
 
 # Initial git repo
