@@ -1,0 +1,73 @@
+---
+layout: post
+title: "Establish a forward proxy on windows use wamp"
+author: "sunnycia"
+categories: journal
+tags: [documentation,sample]
+image: proxy.gif
+---
+
+# Try it on linux?
+本文提供了在windows上搭建前向代理服务的一种解决方案，若是您想要在linux上完成该任务， 可以在linux平台下搭建基于squid的代理上网服务器，详细步骤可参考[这篇文章](http://zhengbo.site/squid-setup/)
+
+
+# Start on Window
+
+在考虑使用windows上搭建代理服务器之前， sunnycia使用的解决方案是用一台linux虚拟机配置好squid然后供服务器上网。可是好景不长，学校提供的上网帐号只允许在一个地方登录， 意味着若是linux虚拟机登录上网后，windows宿主机便无法正常上网。无奈之下只好寻找在windows下配置代理的方法， 经过尝试之后成功， 现将关键步骤记录如下。 本篇文章主要参考[这篇文章](https://blog.csdn.net/qq_29277155/article/details/53856455) 以及[这篇文章](https://blog.gtwang.org/web-development/apache-proxy/)
+
+首先下载wamp， 一个在windows平台下配置apache，mysql以及php的综合平台。其实配置代理只需要apache服务器支持就够了，不过安装wamp能帮用户解决许多烦恼， 因此是一个不错的选择。若想要直接使用apache配置proxy server，请参考[这篇文章](https://blog.csdn.net/qq_29277155/article/details/53856455).
+
+到[wamp官网](http://www.wampserver.com/en/)下载并安装[最近版本的wamp](https://sourceforge.net/projects/wampserver/files/latest/download).
+
+默认安装完毕后在c盘根目录下找到安装根目录wamp64， 点击运行wampmanager.exe即可启动服务， 右下角的图标颜色为绿色表明所有服务启动正常。
+![wamp success](../_assets/img/wamp_success.jpg)
+此时在浏览器里打开localhost即可看到wamp生成的主页。
+![wamp homepage](../_assets/img/wamp_homepage.jpg)
+
+成功后进入wamp根目录下的bin/apache/apache2.*.*文件夹下， 或者单击右下角的wamp图标，修改apache的httpd.conf配置文件
+
+需要取消注释(uncomment)掉几个扩展配置:proxy\_module，proxy\_module，proxy\_http\_module，proxy\_ftp\_module，修改后这几行应为：
+--------------------- 
+LoadModule proxy\_module modules/mod_proxy.so
+LoadModule proxy\_connect\_module modules/mod\_proxy\_connect.so
+LoadModule proxy\_http\_module modules/mod\_proxy\_http.so
+LoadModule proxy\_ftp\_module modules/mod\_proxy\_ftp.so
+---------------------
+
+
+然后在httpd.conf文件最后附上：
+ProxyRequests On
+ProxyVia On
+
+<Proxy *>
+Order deny,allow
+Deny from all
+Allow from internal.example.com
+</Proxy>
+其中 internal.example.com换成你允许使用该proxy上网的ip地址。
+
+完成后restart wamp， 若wamp图标变为绿色，即表明配置成功
+
+Jekyll是一个简易的静态网页生成器, 在本地部署jekyll可以方便我们对页面进行调试. 
+
+pitfall: 之前我并没有部署jekyll, 直接下载好一个[模板](http://jekyllthemes.org/)后push到github上, 结果发现打开sunnycia.github.io页面并没有更新.开始以为是浏览器缓存的问题, 但是清理后发现并没有作用. 无意中发现在注册github的邮箱里收到了几封邮件,都是github page发来的错误提示, 这才明白为什么页面没有更新了. 本地有了jekyll之后我们就可以在目录下键入```jekyll server```, 尝试页面是否生成成功, 并且可以在浏览器中查看网页效果.
+
+部署jekyll之前需要安装ruby, 可以进入ruby官网查看windows或linux系统下的安装方式. 我在centos下是使用源码编译安装.获得源码包ruby-2.3.x之后进入目录, 键入
+```
+bash configure &&
+make && sudo make install
+```
+即可完成安装. 此时gem也同时安装成功, 可以通过```ruby -v && gem -v```查看版本信息
+
+gem是与ruby绑定在一起的一个包管理工具, 作用类似于python的pypi或easy_install, 有了gem就可以方便地去获取其他人上传的基于ruby完成的工具了.
+
+pitfall: 使用gem安装jekyll过程也很简单, 只需一个命令即可```gem install jekyll```     但是我键入这个命令后半天都没有反应, 查找资料了解到可以在命令后面附加```-V```选项观测安装情况. 由于默认的软件源 rubygems.org 比较慢, 所以会给人半天没有反应的感觉.解决办法也很简单, 就是换一个gem源.```gem source -l```查看当前的软件源, ```gem sources --remove https://rubygems.org/``` 移除旧的官方软件源, ```gem source -a https://ruby.taobao.org/```附加淘宝的gem软件源. 最后再用	```gem source -l```查看当前软件源, 确定只剩下了一个taobao软件源.
+
+成功安装好jekyll之后就可以把下载好的模板里的文件全都copy到yourusername.github.io的目录下面, 然后在目录中键入```jekyll server```开启服务, 若有错误, 会有提示. 常见的问题有配置的错误或者缺少了依赖项.如果是缺少了依赖项可以使用```gem install```的方式安装它提示的缺失项.
+
+tips:
+jekyll-gist, pygments...
+
+
+如果开启服务后没有问题, 则会提示server running. 这是你可以在浏览器中键入它显示的服务地址(默认为http://127.0.0.1:4000)来浏览生成的页面. 一般我们发一篇新的po文都是向模板里的_post目录下增加一个以日期命名的markdown文件, jekyll会根据md文件中头标记来判断该文章是否为一篇po文.具体可研究模板中的示例文件内部的写法. 一切无误后就可以将本地的仓库同步到远端, 向世界发布你的所思所想了~  
+
